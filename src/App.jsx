@@ -1,5 +1,7 @@
 // src/App.jsx
 import { useMemo, useState } from 'react'
+import ThemeToggle from './components/ThemeToggle'
+import LogoMark from './components/LogoMark'
 import { boardSpaces, deploySteps, roadmap, ruleHighlights } from './data/gameData'
 
 function StatCard({ label, value, note }) {
