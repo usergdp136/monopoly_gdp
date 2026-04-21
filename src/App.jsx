@@ -5,11 +5,30 @@ import { boardPreview, deploySteps, roadmap, ruleHighlights } from './data/gameD
 
 function StatCard({ label, value, note }) {
   return (
-    <article className="stat-card">
+    <article className="stat-card vintage-card">
       <span className="eyebrow">{label}</span>
       <strong>{value}</strong>
       <p>{note}</p>
     </article>
+  )
+}
+
+function CornerCell({ title, subtitle, className = '' }) {
+  return (
+    <div className={`corner-cell ${className}`}>
+      <span>{subtitle}</span>
+      <strong>{title}</strong>
+    </div>
+  )
+}
+
+function BoardCell({ name, type, color }) {
+  return (
+    <div className={`board-space board-${type}`}>
+      <span className="cell-bar" style={{ background: color }} />
+      <strong>{name}</strong>
+      <small>{type}</small>
+    </div>
   )
 }
 
@@ -21,7 +40,11 @@ export default function App() {
   const setupSummary = useMemo(() => {
     return {
       turns: players * 12,
-      seedFunds: new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(cash),
+      seedFunds: new Intl.NumberFormat('it-IT', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0
+      }).format(cash),
       auctions: Math.max(2, Math.round(players / 2))
     }
   }, [players, cash])
@@ -30,9 +53,15 @@ export default function App() {
     setTheme((current) => (current === 'light' ? 'dark' : 'light'))
   }
 
+  const topRow = boardPreview.slice(0, 4)
+  const rightCol = boardPreview.slice(4, 7)
+  const bottomRow = boardPreview.slice(7, 11)
+  const leftCol = boardPreview.slice(11, 14)
+
   return (
-    <div className="app-shell" data-theme={theme}>
+    <div className="app-shell board-theme" data-theme={theme}>
       <a href="#contenuto" className="skip-link">Vai al contenuto</a>
+
       <header className="topbar">
         <div className="brand">
           <LogoMark />
@@ -48,27 +77,57 @@ export default function App() {
       </header>
 
       <main id="contenuto" className="dashboard">
-        <section className="hero-panel">
-          <div className="hero-copy">
-            <span className="eyebrow accent">Monopoli italiano, base elegante</span>
-            <h2>Una webapp bella da pubblicare subito, progettata per GitHub e Railway.</h2>
-            <p>
-              Questa prima versione imposta una direzione grafica premium e una struttura tecnica ordinata per implementare il regolamento classico: acquisti, aste, affitti, case, alberghi, prigione, ipoteche e bancarotta.
-            </p>
-            <div className="hero-actions">
-              <button className="btn btn-primary">Avvia progetto</button>
-              <button className="btn btn-secondary">Vedi roadmap</button>
+        <section className="board-hero">
+          <div className="game-board" aria-label="Tabellone vintage Monopoli italiano">
+            <CornerCell title="VIA!" subtitle="Incassa 500€" className="corner-top-left" />
+            <div className="board-row top-row">
+              {topRow.map((cell) => (
+                <BoardCell key={cell.name} {...cell} />
+              ))}
             </div>
-          </div>
+            <CornerCell title="Prigione" subtitle="Transito" className="corner-top-right" />
 
-          <div className="hero-board" aria-label="Anteprima plancia">
-            {boardPreview.map((cell) => (
-              <div key={cell.name} className="board-cell">
-                <span className="cell-bar" style={{ background: cell.color }} />
-                <strong>{cell.name}</strong>
-                <small>{cell.type}</small>
+            <div className="board-column left-column">
+              {leftCol.map((cell) => (
+                <BoardCell key={cell.name} {...cell} />
+              ))}
+            </div>
+
+            <div className="board-center">
+              <div className="board-center-inner">
+                <span className="eyebrow accent">Monopoli italiano</span>
+                <h2>Classico vintage, pronto per diventare un vero tabellone giocabile.</h2>
+                <p>
+                  La plancia riprende il linguaggio del gioco da tavolo: caselle sul perimetro,
+                  angoli forti, gruppi colore, carte speciali e un centro dedicato allo stato della partita.
+                </p>
+
+                <div className="hero-actions">
+                  <button className="btn btn-primary">Avvia progetto</button>
+                  <button className="btn btn-secondary">Vedi roadmap</button>
+                </div>
+
+                <div className="center-badges">
+                  <span>4 giocatori demo</span>
+                  <span>{setupSummary.seedFunds}</span>
+                  <span>{setupSummary.turns} turni test</span>
+                </div>
               </div>
-            ))}
+            </div>
+
+            <div className="board-column right-column">
+              {rightCol.map((cell) => (
+                <BoardCell key={cell.name} {...cell} />
+              ))}
+            </div>
+
+            <CornerCell title="Parcheggio" subtitle="Sosta libera" className="corner-bottom-left" />
+            <div className="board-row bottom-row">
+              {bottomRow.map((cell) => (
+                <BoardCell key={cell.name} {...cell} />
+              ))}
+            </div>
+            <CornerCell title="Vai in prigione" subtitle="Attenzione" className="corner-bottom-right" />
           </div>
         </section>
 
@@ -80,7 +139,7 @@ export default function App() {
         </section>
 
         <section className="content-grid">
-          <article className="panel panel-large">
+          <article className="panel panel-large vintage-card">
             <div className="panel-head">
               <div>
                 <span className="eyebrow">Regole chiave</span>
@@ -98,7 +157,7 @@ export default function App() {
             </div>
           </article>
 
-          <aside className="panel">
+          <aside className="panel vintage-card">
             <div className="panel-head compact">
               <div>
                 <span className="eyebrow">Setup demo</span>
@@ -120,7 +179,7 @@ export default function App() {
             </div>
           </aside>
 
-          <article className="panel">
+          <article className="panel vintage-card">
             <div className="panel-head compact">
               <div>
                 <span className="eyebrow">Roadmap</span>
@@ -134,7 +193,7 @@ export default function App() {
             </ol>
           </article>
 
-          <article className="panel">
+          <article className="panel vintage-card">
             <div className="panel-head compact">
               <div>
                 <span className="eyebrow">Deploy</span>
