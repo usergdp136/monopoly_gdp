@@ -18,16 +18,29 @@ export const ruleHighlights = [
 ]
 
 export const boardPreview = [
-  { name: 'VIA!', type: 'special', color: '#01696f' },
-  { name: 'Largo Colombo', type: 'property', color: '#7a4f2b' },
-  { name: 'Probabilità', type: 'card', color: '#006494' },
-  { name: 'Viale Vespucci', type: 'property', color: '#7a4f2b' },
-  { name: 'Tassa patrimoniale', type: 'tax', color: '#964219' },
-  { name: 'Stazione Sud', type: 'station', color: '#28251d' },
-  { name: 'Bastioni Gran Sasso', type: 'property', color: '#9bc53d' },
-  { name: 'Imprevisti', type: 'card', color: '#a13544' },
-  { name: 'Viale Monterosa', type: 'property', color: '#9bc53d' },
-  { name: 'Prigione / Transito', type: 'special', color: '#d19900' }
+  // lato alto da VIA! a Prigione / Transito
+  { name: 'VIA!', type: 'special', color: '#e6e6e6' },
+  { name: 'Largo Colombo', type: 'property', color: '#955436' },      // marrone
+  { name: 'Probabilità', type: 'card', color: '#0072bb' },            // blu carta
+  { name: 'Viale Vespucci', type: 'property', color: '#955436' },     // marrone
+  { name: 'Transito Prigione', type: 'special', color: '#e6e6e6' },
+
+  // lato destro dall'alto verso il basso
+  { name: 'Tassa patrimoniale', type: 'tax', color: '#d8d2c1' },
+  { name: 'Stazione Sud', type: 'station', color: '#000000' },
+  { name: 'Bastioni Gran Sasso', type: 'property', color: '#f28e1c' }, // arancione
+
+  // lato basso da destra verso sinistra
+  { name: 'Vai in prigione', type: 'special', color: '#e6e6e6' },
+  { name: 'Prigione / Transito', type: 'special', color: '#e6e6e6' },
+  { name: 'Viale Monterosa', type: 'property', color: '#f28e1c' },    // arancione
+  { name: 'Imprevisti', type: 'card', color: '#d62828' },             // rosso carta
+  { name: 'Sosta libera', type: 'special', color: '#e6e6e6' },
+
+  // lato sinistro dal basso verso l'alto
+  { name: 'Parcheggio', type: 'special', color: '#e6e6e6' },
+  { name: 'Prigione', type: 'special', color: '#e6e6e6' },
+  { name: 'Stazione Nord', type: 'station', color: '#000000' }
 ]
 
 export const roadmap = [
