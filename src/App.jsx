@@ -1,7 +1,8 @@
+// src/App.jsx
 import { useMemo, useState } from 'react'
 import ThemeToggle from './components/ThemeToggle'
 import LogoMark from './components/LogoMark'
-import { boardPreview, deploySteps, roadmap, ruleHighlights } from './data/gameData'
+import { boardSpaces, deploySteps, roadmap, ruleHighlights } from './data/gameData'
 
 function StatCard({ label, value, note }) {
   return (
@@ -13,26 +14,77 @@ function StatCard({ label, value, note }) {
   )
 }
 
-function CornerCell({ title, subtitle, className = '' }) {
+function BoardCell({ space }) {
+  const isCorner = space.type === 'corner'
+
+  if (isCorner) {
+    let main = ''
+    let sub = ''
+
+    if (space.group === 'start') {
+      sub = 'Incassa 500€'
+      main = 'VIA!'
+    } else if (space.group === 'parking') {
+      sub = 'Sosta libera'
+      main = 'Parcheggio'
+    } else if (space.group === 'jail') {
+      sub = 'Transito'
+      main = 'Prigione'
+    } else if (space.group === 'goto-jail') {
+      sub = 'Attenzione'
+      main = 'Vai in prigione'
+    } else {
+      sub = ''
+      main = space.name
+    }
+
+    return (
+      <div className={`corner-cell corner-${space.group}`}>
+        {sub && <span>{sub}</span>}
+        <strong>{main}</strong>
+      </div>
+    )
+  }
+
   return (
-    <div className={`corner-cell ${className}`}>
-      <span>{subtitle}</span>
-      <strong>{title}</strong>
+    <div className={`board-space board-${space.type}`}>
+      <div className="cell-bar" style={{ background: space.color }} />
+      <div className="cell-text">
+        <strong className="cell-name">{space.name}</strong>
+        <small className="cell-type">{space.type.toUpperCase()}</small>
+      </div>
+      {space.type === 'chance' && <div className="cell-symbol">?</div>}
+      {space.type === 'community' && <div className="cell-symbol">!</div>}
+      {space.type === 'tax' && <div className="cell-symbol">€</div>}
+      {space.type === 'station' && <div className="cell-symbol">🚉</div>}
+      {space.type === 'utility' && <div className="cell-symbol">⚙︎</div>}
     </div>
   )
 }
 
-function BoardCell({ name, type, color }) {
-  return (
-    <div className={`board-space board-${type}`}>
-      <div className="cell-bar" style={{ background: color }} />
-      <div className="cell-text">
-        <strong className="cell-name">{name}</strong>
-        <small className="cell-type">{type.toUpperCase()}</small>
-      </div>
-    </div>
-  )
+// suddivide i 40 spazi sui 4 lati del rettangolo
+function useBoardSides() {
+  const top = []
+  const right = []
+  const bottom = []
+  const left = []
+
+  boardSpaces.forEach((space) => {
+    const i = space.id
+    if (i >= 0 && i <= 10) {
+      top.push(space)
+    } else if (i >= 10 && i <= 20) {
+      right.push(space)
+    } else if (i >= 20 && i <= 30) {
+      bottom.push(space)
+    } else {
+      left.push(space)
+    }
+  })
+
+  return { top, right, bottom, left }
 }
+
 export default function App() {
   const [theme, setTheme] = useState('light')
   const [players, setPlayers] = useState(4)
@@ -54,10 +106,7 @@ export default function App() {
     setTheme((current) => (current === 'light' ? 'dark' : 'light'))
   }
 
-  const topRow = boardPreview.slice(0, 4)
-  const rightCol = boardPreview.slice(4, 7)
-  const bottomRow = boardPreview.slice(7, 11)
-  const leftCol = boardPreview.slice(11, 14)
+  const { top, right, bottom, left } = useBoardSides()
 
   return (
     <div className="app-shell board-theme" data-theme={theme}>
@@ -79,21 +128,36 @@ export default function App() {
 
       <main id="contenuto" className="dashboard">
         <section className="board-hero">
-          <div className="game-board" aria-label="Tabellone vintage Monopoli italiano">
-            <CornerCell title="VIA!" subtitle="Incassa 500€" className="corner-top-left" />
+          <div className="game-board" aria-label="Tabellone Monopoli italiano vintage">
+            {/* lato alto */}
             <div className="board-row top-row">
-              {topRow.map((cell) => (
-                <BoardCell key={cell.name} {...cell} />
+              {top.map((space) => (
+                <BoardCell key={space.id} space={space} />
               ))}
             </div>
-            <CornerCell title="Prigione" subtitle="Transito" className="corner-top-right" />
 
+            {/* lato destro */}
+            <div className="board-column right-column">
+              {right.map((space) => (
+                <BoardCell key={space.id} space={space} />
+              ))}
+            </div>
+
+            {/* lato sinistro */}
             <div className="board-column left-column">
-              {leftCol.map((cell) => (
-                <BoardCell key={cell.name} {...cell} />
+              {left.map((space) => (
+                <BoardCell key={space.id} space={space} />
               ))}
             </div>
 
+            {/* lato basso */}
+            <div className="board-row bottom-row">
+              {bottom.map((space) => (
+                <BoardCell key={space.id} space={space} />
+              ))}
+            </div>
+
+            {/* centro tabellone */}
             <div className="board-center">
               <div className="board-center-inner">
                 <span className="eyebrow accent">Monopoli italiano</span>
@@ -109,26 +173,12 @@ export default function App() {
                 </div>
 
                 <div className="center-badges">
-                  <span>4 giocatori demo</span>
+                  <span>{players} giocatori demo</span>
                   <span>{setupSummary.seedFunds}</span>
                   <span>{setupSummary.turns} turni test</span>
                 </div>
               </div>
             </div>
-
-            <div className="board-column right-column">
-              {rightCol.map((cell) => (
-                <BoardCell key={cell.name} {...cell} />
-              ))}
-            </div>
-
-            <CornerCell title="Parcheggio" subtitle="Sosta libera" className="corner-bottom-left" />
-            <div className="board-row bottom-row">
-              {bottomRow.map((cell) => (
-                <BoardCell key={cell.name} {...cell} />
-              ))}
-            </div>
-            <CornerCell title="Vai in prigione" subtitle="Attenzione" className="corner-bottom-right" />
           </div>
         </section>
 
