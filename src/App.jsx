@@ -25,13 +25,14 @@ function CornerCell({ title, subtitle, className = '' }) {
 function BoardCell({ name, type, color }) {
   return (
     <div className={`board-space board-${type}`}>
-      <span className="cell-bar" style={{ background: color }} />
-      <strong>{name}</strong>
-      <small>{type}</small>
+      <div className="cell-bar" style={{ background: color }} />
+      <div className="cell-text">
+        <strong className="cell-name">{name}</strong>
+        <small className="cell-type">{type.toUpperCase()}</small>
+      </div>
     </div>
   )
 }
-
 export default function App() {
   const [theme, setTheme] = useState('light')
   const [players, setPlayers] = useState(4)
